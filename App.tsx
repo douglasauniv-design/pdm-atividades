@@ -1,42 +1,63 @@
-// Atividade 2: Screen Wrappers
-// Para testar, comente/descomente os retornos abaixo
+// Atividade 3: useState
+// Tela de identificação de visitante com formulário e renderização condicional
 
-import { StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, Button, View } from "react-native";
 import ScreenWrapperFullscreen from "./src/components/screen-wrappers/ScreenWrapperFullscreen";
-import ScreenWrapperScrollable from "./src/components/screen-wrappers/ScreenWrapperScrollable";
 
 export default function App() {
-  // ═══════════════════════════════════════════
-  // TESTE 1: ScreenWrapperFullscreen (centralizado)
-  // Comente este bloco para testar o Scrollable
-  // ═══════════════════════════════════════════
-  //return (
-    //<ScreenWrapperFullscreen center gap={12}>
-      //<Text style={styles.title}>Tela de Acesso</Text>
-//      <Text style={styles.text}>Conteúdo centralizado na tela</Text>
-//      <View style={styles.box}>
-   //     <Text style={styles.boxText}>Login</Text>
- //     </View>
-  //  </ScreenWrapperFullscreen>
- // );
+  // Estado para armazenar o nome digitado (tipagem explícita)
+  const [name, setName] = useState<string>("");
 
-  // ═══════════════════════════════════════════
-  // TESTE 2: ScreenWrapperScrollable (com rolagem)
-  // Descomente este bloco e comente o de cima
-  // ═══════════════════════════════════════════
-   return (
-     <ScreenWrapperScrollable
-       gap={10}
-       onRefresh={() => console.log("Atualizando...")}
-     >
-       <Text style={styles.title}>Lista de Itens</Text>
-       {Array.from({ length: 20 }, (_, i) => (
-         <View key={i} style={styles.card}>
-           <Text style={styles.text}>Item {i + 1}</Text>
-         </View>
-       ))}
-     </ScreenWrapperScrollable>
-   );
+  // Estado para controlar se o acesso foi autorizado (tipagem explícita)
+  const [accessAuthorized, setAccessAuthorized] = useState<boolean>(false);
+
+  // Função chamada ao pressionar o botão de acesso
+  const handleAccess = () => {
+    setAccessAuthorized(true);
+  };
+
+  // Função chamada ao pressionar o botão de sair (reseta o fluxo)
+  const handleLogout = () => {
+    setAccessAuthorized(false);
+    setName("");
+  };
+
+  return (
+    <ScreenWrapperFullscreen center gap={16}>
+      <Text style={styles.title}>Identificação de Visitante</Text>
+
+      {/* Renderização condicional: formulário ou mensagem de boas-vindas */}
+      {!accessAuthorized ? (
+        // Formulário de entrada exibido enquanto acesso não foi autorizado
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu nome completo"
+            value={name}
+            onChangeText={setName}
+          />
+
+          {/* Botão desabilitado enquanto o nome estiver vazio */}
+          <Button
+            title="Solicitar Acesso"
+            onPress={handleAccess}
+            disabled={name.trim().length === 0}
+          />
+        </View>
+      ) : (
+        // Mensagem de boas-vindas exibida após o acesso ser concedido
+        <View style={styles.welcome}>
+          <Text style={styles.welcomeText}>
+            Acesso Liberado para: {name}
+          </Text>
+
+          {/* Botão de sair que reseta o estado e volta ao formulário */}
+          <Button title="Sair" onPress={handleLogout} color="#999" />
+        </View>
+      )}
+    </ScreenWrapperFullscreen>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -44,24 +65,24 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
   },
-  text: {
-    fontSize: 16,
-    color: "#555",
+  form: {
+    width: "100%",
+    gap: 12,
   },
-  box: {
-    backgroundColor: "#3498db",
-    paddingHorizontal: 32,
-    paddingVertical: 12,
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
   },
-  boxText: {
-    color: "#fff",
+  welcome: {
+    alignItems: "center",
+    gap: 16,
+  },
+  welcomeText: {
+    fontSize: 18,
     fontWeight: "bold",
-    fontSize: 16,
-  },
-  card: {
-    backgroundColor: "#f0f0f0",
-    padding: 16,
-    borderRadius: 8,
+    textAlign: "center",
   },
 });
