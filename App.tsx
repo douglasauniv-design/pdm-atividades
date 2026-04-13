@@ -1,50 +1,67 @@
-// Ponto de entrada principal do aplicativo
-import { StatusBar } from "expo-status-bar";
+// Atividade 2: Screen Wrappers
+// Para testar, comente/descomente os retornos abaixo
+
 import { StyleSheet, Text, View } from "react-native";
+import ScreenWrapperFullscreen from "./src/components/screen-wrappers/ScreenWrapperFullscreen";
+import ScreenWrapperScrollable from "./src/components/screen-wrappers/ScreenWrapperScrollable";
 
 export default function App() {
-  // Nome do usuário para saudação (será usado na Atividade 1)
-  const userName: string = "Estudante PDM";
+  // ═══════════════════════════════════════════
+  // TESTE 1: ScreenWrapperFullscreen (centralizado)
+  // Comente este bloco para testar o Scrollable
+  // ═══════════════════════════════════════════
+  //return (
+    //<ScreenWrapperFullscreen center gap={12}>
+      //<Text style={styles.title}>Tela de Acesso</Text>
+//      <Text style={styles.text}>Conteúdo centralizado na tela</Text>
+//      <View style={styles.box}>
+   //     <Text style={styles.boxText}>Login</Text>
+ //     </View>
+  //  </ScreenWrapperFullscreen>
+ // );
 
-  return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Text style={styles.title}>📱 PDM - Atividades</Text>
-      <Text style={styles.subtitle}>Olá, {userName}!</Text>
-      <Text style={styles.info}>Ambiente configurado com sucesso!</Text>
-    </View>
-  );
+  // ═══════════════════════════════════════════
+  // TESTE 2: ScreenWrapperScrollable (com rolagem)
+  // Descomente este bloco e comente o de cima
+  // ═══════════════════════════════════════════
+   return (
+     <ScreenWrapperScrollable
+       gap={10}
+       onRefresh={() => console.log("Atualizando...")}
+     >
+       <Text style={styles.title}>Lista de Itens</Text>
+       {Array.from({ length: 20 }, (_, i) => (
+         <View key={i} style={styles.card}>
+           <Text style={styles.text}>Item {i + 1}</Text>
+         </View>
+       ))}
+     </ScreenWrapperScrollable>
+   );
 }
 
-// Estilos da tela principal
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1a1a2e",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "#e94560",
-    marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#eaeaea",
-    marginBottom: 4,
+  text: {
+    fontSize: 16,
+    color: "#555",
   },
-  info: {
-    fontSize: 14,
-    color: "#0f3460",
-    backgroundColor: "#16213e",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  box: {
+    backgroundColor: "#3498db",
+    paddingHorizontal: 32,
+    paddingVertical: 12,
     borderRadius: 8,
-    marginTop: 16,
-    color: "#a8d8ea",
-    overflow: "hidden",
+  },
+  boxText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  card: {
+    backgroundColor: "#f0f0f0",
+    padding: 16,
+    borderRadius: 8,
   },
 });
