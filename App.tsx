@@ -1,50 +1,88 @@
-// Ponto de entrada principal do aplicativo
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+// Atividade 3: useState
+// Tela de identificação de visitante com formulário e renderização condicional
+
+import { useState } from "react";
+import { StyleSheet, Text, TextInput, Button, View } from "react-native";
+import ScreenWrapperFullscreen from "./src/components/screen-wrappers/ScreenWrapperFullscreen";
 
 export default function App() {
-  // Nome do usuário para saudação (será usado na Atividade 1)
-  const userName: string = "Estudante PDM";
+  // Estado para armazenar o nome digitado (tipagem explícita)
+  const [name, setName] = useState<string>("");
+
+  // Estado para controlar se o acesso foi autorizado (tipagem explícita)
+  const [accessAuthorized, setAccessAuthorized] = useState<boolean>(false);
+
+  // Função chamada ao pressionar o botão de acesso
+  const handleAccess = () => {
+    setAccessAuthorized(true);
+  };
+
+  // Função chamada ao pressionar o botão de sair (reseta o fluxo)
+  const handleLogout = () => {
+    setAccessAuthorized(false);
+    setName("");
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Text style={styles.title}>📱 PDM - Atividades</Text>
-      <Text style={styles.subtitle}>Olá, {userName}!</Text>
-      <Text style={styles.info}>Ambiente configurado com sucesso!</Text>
-    </View>
+    <ScreenWrapperFullscreen center gap={16}>
+      <Text style={styles.title}>Identificação de Visitante</Text>
+
+      {/* Renderização condicional: formulário ou mensagem de boas-vindas */}
+      {!accessAuthorized ? (
+        // Formulário de entrada exibido enquanto acesso não foi autorizado
+        <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu nome completo"
+            value={name}
+            onChangeText={setName}
+          />
+
+          {/* Botão desabilitado enquanto o nome estiver vazio */}
+          <Button
+            title="Solicitar Acesso"
+            onPress={handleAccess}
+            disabled={name.trim().length === 0}
+          />
+        </View>
+      ) : (
+        // Mensagem de boas-vindas exibida após o acesso ser concedido
+        <View style={styles.welcome}>
+          <Text style={styles.welcomeText}>
+            Acesso Liberado para: {name}
+          </Text>
+
+          {/* Botão de sair que reseta o estado e volta ao formulário */}
+          <Button title="Sair" onPress={handleLogout} color="#999" />
+        </View>
+      )}
+    </ScreenWrapperFullscreen>
   );
 }
 
-// Estilos da tela principal
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1a1a2e",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "bold",
-    color: "#e94560",
-    marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 18,
-    color: "#eaeaea",
-    marginBottom: 4,
+  form: {
+    width: "100%",
+    gap: 12,
   },
-  info: {
-    fontSize: 14,
-    color: "#0f3460",
-    backgroundColor: "#16213e",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
-    marginTop: 16,
-    color: "#a8d8ea",
-    overflow: "hidden",
+    padding: 12,
+    fontSize: 16,
+  },
+  welcome: {
+    alignItems: "center",
+    gap: 16,
+  },
+  welcomeText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
