@@ -1,88 +1,25 @@
-// Atividade 3: useState
-// Tela de identificação de visitante com formulário e renderização condicional
+// Atividade 4: useEffect
+// Botão liga/desliga para testar montagem e desmontagem do sensor
 
 import { useState } from "react";
-import { StyleSheet, Text, TextInput, Button, View } from "react-native";
+import { Button } from "react-native";
 import ScreenWrapperFullscreen from "./src/components/screen-wrappers/ScreenWrapperFullscreen";
+import ParkingSensor from "./src/components/ParkingSensor";
 
 export default function App() {
-  // Estado para armazenar o nome digitado (tipagem explícita)
-  const [name, setName] = useState<string>("");
-
-  // Estado para controlar se o acesso foi autorizado (tipagem explícita)
-  const [accessAuthorized, setAccessAuthorized] = useState<boolean>(false);
-
-  // Função chamada ao pressionar o botão de acesso
-  const handleAccess = () => {
-    setAccessAuthorized(true);
-  };
-
-  // Função chamada ao pressionar o botão de sair (reseta o fluxo)
-  const handleLogout = () => {
-    setAccessAuthorized(false);
-    setName("");
-  };
+  // Estado que controla se o sensor está visível (montado) ou não
+  const [sensorOn, setSensorOn] = useState<boolean>(false);
 
   return (
-    <ScreenWrapperFullscreen center gap={16}>
-      <Text style={styles.title}>Identificação de Visitante</Text>
+    <ScreenWrapperFullscreen center gap={20}>
+      {/* Botão que alterna entre ligar e desligar o sensor */}
+      <Button
+        title={sensorOn ? "Desligar Sensor" : "Ligar Sensor"}
+        onPress={() => setSensorOn(!sensorOn)}
+      />
 
-      {/* Renderização condicional: formulário ou mensagem de boas-vindas */}
-      {!accessAuthorized ? (
-        // Formulário de entrada exibido enquanto acesso não foi autorizado
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite seu nome completo"
-            value={name}
-            onChangeText={setName}
-          />
-
-          {/* Botão desabilitado enquanto o nome estiver vazio */}
-          <Button
-            title="Solicitar Acesso"
-            onPress={handleAccess}
-            disabled={name.trim().length === 0}
-          />
-        </View>
-      ) : (
-        // Mensagem de boas-vindas exibida após o acesso ser concedido
-        <View style={styles.welcome}>
-          <Text style={styles.welcomeText}>
-            Acesso Liberado para: {name}
-          </Text>
-
-          {/* Botão de sair que reseta o estado e volta ao formulário */}
-          <Button title="Sair" onPress={handleLogout} color="#999" />
-        </View>
-      )}
+      {/* Renderização condicional: monta/desmonta o componente ParkingSensor */}
+      {sensorOn && <ParkingSensor />}
     </ScreenWrapperFullscreen>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  form: {
-    width: "100%",
-    gap: 12,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  welcome: {
-    alignItems: "center",
-    gap: 16,
-  },
-  welcomeText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-});
