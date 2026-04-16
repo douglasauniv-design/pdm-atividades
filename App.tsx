@@ -10,33 +10,33 @@ export default function App() {
   // TESTE 1: ScreenWrapperFullscreen (centralizado)
   // Comente este bloco para testar o Scrollable
   // ═══════════════════════════════════════════
-  //return (
-    //<ScreenWrapperFullscreen center gap={12}>
-      //<Text style={styles.title}>Tela de Acesso</Text>
-//      <Text style={styles.text}>Conteúdo centralizado na tela</Text>
-//      <View style={styles.box}>
-   //     <Text style={styles.boxText}>Login</Text>
- //     </View>
-  //  </ScreenWrapperFullscreen>
- // );
+  return (
+    <ScreenWrapperFullscreen center gap={12}>
+      <Text style={styles.title}>Tela de Acesso</Text>
+      <Text style={styles.text}>Conteúdo centralizado na tela</Text>
+      <View style={styles.box}>
+        <Text style={styles.boxText}>Login</Text>
+      </View>
+    </ScreenWrapperFullscreen>
+  );
 
   // ═══════════════════════════════════════════
   // TESTE 2: ScreenWrapperScrollable (com rolagem)
   // Descomente este bloco e comente o de cima
   // ═══════════════════════════════════════════
-   return (
-     <ScreenWrapperScrollable
-       gap={10}
-       onRefresh={() => console.log("Atualizando...")}
-     >
-       <Text style={styles.title}>Lista de Itens</Text>
-       {Array.from({ length: 20 }, (_, i) => (
-         <View key={i} style={styles.card}>
-           <Text style={styles.text}>Item {i + 1}</Text>
-         </View>
-       ))}
-     </ScreenWrapperScrollable>
-   );
+  // return (
+  //   <ScreenWrapperScrollable
+  //     gap={10}
+  //     onRefresh={() => console.log("Atualizando...")}
+  //   >
+  //     <Text style={styles.title}>Lista de Itens</Text>
+  //     {Array.from({ length: 20 }, (_, i) => (
+  //       <View key={i} style={styles.card}>
+  //         <Text style={styles.text}>Item {i + 1}</Text>
+  //       </View>
+  //     ))}
+  //   </ScreenWrapperScrollable>
+  // );
 }
 
 const styles = StyleSheet.create({
