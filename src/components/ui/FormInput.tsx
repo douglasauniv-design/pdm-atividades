@@ -1,7 +1,8 @@
-// Componente reutilizável FormInput
-// Requisito 4: recebe label, error e eventos de alteração de texto
-// Requisito 5: exibe mensagem de erro em cor destacada quando inválido
+// Componente reutilizavel FormInput
+// Requisito 4: recebe label, error e eventos de alteracao de texto
+// Requisito 5: exibe mensagem de erro em cor destacada quando invalido
 
+import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 type FormInputProps = {
@@ -11,6 +12,7 @@ type FormInputProps = {
   onChangeText: (text: string) => void;
   placeholder?: string;
   keyboardType?: "default" | "numeric";
+  secureTextEntry?: boolean;
 };
 
 export default function FormInput({
@@ -20,19 +22,31 @@ export default function FormInput({
   onChangeText,
   placeholder,
   keyboardType = "default",
+  secureTextEntry = false,
 }: FormInputProps) {
+  // Estado para controlar se o campo esta focado
+  const [focused, setFocused] = useState<boolean>(false);
+
   return (
     <View style={styles.container}>
       {/* Label do campo */}
       <Text style={styles.label}>{label}</Text>
 
-      {/* Campo de texto com borda vermelha se houver erro */}
+      {/* Campo de texto com borda que muda conforme estado */}
       <TextInput
-        style={[styles.input, error ? styles.inputError : null]}
+        style={[
+          styles.input,
+          focused && styles.inputFocused,
+          error ? styles.inputError : null,
+        ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
+        placeholderTextColor="#aaa"
         keyboardType={keyboardType}
+        secureTextEntry={secureTextEntry}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       />
 
       {/* Mensagem de erro exibida apenas quando error tem valor */}
@@ -47,19 +61,24 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#333",
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
+    backgroundColor: "#fafafa",
+  },
+  inputFocused: {
+    borderColor: "#3498db",
     backgroundColor: "#fff",
   },
   inputError: {
     borderColor: "#e74c3c",
+    backgroundColor: "#fff5f5",
   },
   error: {
     fontSize: 12,
