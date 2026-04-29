@@ -3,6 +3,7 @@
 
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
+// Contrato de props do componente
 type FormButtonProps = {
   title: string;
   onPress: () => void;
@@ -16,7 +17,7 @@ export default function FormButton({
   disabled = false,
   variant = "primary",
 }: FormButtonProps) {
-  // Seleciona os estilos de acordo com a variante
+  // Verifica se e a variante principal
   const isPrimary = variant === "primary";
 
   return (
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   },
   secondary: {
     backgroundColor: "transparent",
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: "#3498db",
   },
   buttonDisabled: {

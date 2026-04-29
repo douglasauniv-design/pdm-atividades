@@ -43,6 +43,9 @@ export default function App() {
   const [priceError, setPriceError] = useState<string>("");
   const [categoryError, setCategoryError] = useState<string>("");
 
+  // Estado que indica se o formulario ja foi submetido pelo menos uma vez
+  const [submitted, setSubmitted] = useState<boolean>(false);
+
   // Requisito 9: estado que controla se o botao esta habilitado
   const [formValid, setFormValid] = useState<boolean>(false);
 
@@ -52,23 +55,66 @@ export default function App() {
       setLoading(false);
     }, 2000);
 
-    // Limpeza do timer ao desmontar
     return () => clearTimeout(timer);
   }, []);
 
   // Requisito 9: useEffect que monitora os campos e habilita/desabilita o botao
   useEffect(() => {
     const isNameValid = name.trim().length >= 3;
-    const isPriceValid = price.trim().length > 0 && !isNaN(Number(price)) && Number(price) > 0;
+    const isPriceValid =
+      price.trim().length > 0 && !isNaN(Number(price)) && Number(price) > 0;
     const isCategoryValid = category.trim().length >= 2;
 
     setFormValid(isNameValid && isPriceValid && isCategoryValid);
-  }, [name, price, category]);
 
-  // Funcao de validacao que verifica cada campo e define mensagens de erro
+    // Se o formulario ja foi submetido, valida em tempo real
+    if (submitted) {
+      validateField("name", name);
+      validateField("price", price);
+      validateField("category", category);
+    }
+  }, [name, price, category, submitted]);
+
+  // Funcao que valida um campo individual e define a mensagem de erro
+  const validateField = (field: string, value: string) => {
+    if (field === "name") {
+      if (value.trim().length === 0) {
+        setNameError("Nome e obrigatorio");
+      } else if (value.trim().length < 3) {
+        setNameError("Nome deve ter pelo menos 3 caracteres");
+      } else {
+        setNameError("");
+      }
+    }
+
+    if (field === "price") {
+      if (value.trim().length === 0) {
+        setPriceError("Preco e obrigatorio");
+      } else if (isNaN(Number(value))) {
+        setPriceError("Preco deve ser um numero valido");
+      } else if (Number(value) <= 0) {
+        setPriceError("Preco deve ser maior que zero");
+      } else {
+        setPriceError("");
+      }
+    }
+
+    if (field === "category") {
+      if (value.trim().length === 0) {
+        setCategoryError("Categoria e obrigatoria");
+      } else if (value.trim().length < 2) {
+        setCategoryError("Categoria deve ter pelo menos 2 caracteres");
+      } else {
+        setCategoryError("");
+      }
+    }
+  };
+
+  // Funcao de validacao completa executada ao submeter
   const validate = (): boolean => {
     let valid = true;
 
+    // Validacao do nome
     if (name.trim().length === 0) {
       setNameError("Nome e obrigatorio");
       valid = false;
@@ -79,6 +125,7 @@ export default function App() {
       setNameError("");
     }
 
+    // Validacao do preco
     if (price.trim().length === 0) {
       setPriceError("Preco e obrigatorio");
       valid = false;
@@ -92,6 +139,7 @@ export default function App() {
       setPriceError("");
     }
 
+    // Validacao da categoria
     if (category.trim().length === 0) {
       setCategoryError("Categoria e obrigatoria");
       valid = false;
@@ -114,19 +162,43 @@ export default function App() {
     setNameError("");
     setPriceError("");
     setCategoryError("");
+    setSubmitted(false);
   };
 
   // Requisito 10: acao de submissao que loga os valores no console
   const handleSubmit = () => {
-    if (!validate()) return;
+    // Marca que o formulario foi submetido (ativa validacao em tempo real)
+    setSubmitted(true);
 
-    console.log("=== Dados do Formulario ===");
+    // Executa a validacao completa
+    if (!validate()) {
+      return;
+    }
+
+    // Loga os dados no console (F12 na web, terminal no Expo Go)
+    console.log("=============================");
+    console.log("  DADOS DO FORMULARIO");
+    console.log("=============================");
     console.log("Nome:", name);
-    console.log("Preco:", price);
+    console.log("Preco: R$", price);
     console.log("Categoria:", category);
-    console.log("Em estoque:", inStock);
+    console.log("Em estoque:", inStock ? "Sim" : "Nao");
+    console.log("=============================");
 
-    showAlert("Sucesso", "Componente cadastrado com sucesso!");
+    // Exibe alerta de sucesso
+    showAlert(
+      "Cadastro realizado",
+      "Nome: " +
+        name +
+        "\nPreco: R$ " +
+        price +
+        "\nCategoria: " +
+        category +
+        "\nEm estoque: " +
+        (inStock ? "Sim" : "Nao")
+    );
+
+    // Limpa o formulario
     resetForm();
   };
 
@@ -143,7 +215,7 @@ export default function App() {
 
   // Requisito 1: ScreenWrapperScrollable como container principal
   return (
-    <ScreenWrapperScrollable gap={16}>
+    <ScreenWrapperScrollable gap={14}>
       <StatusBar style="auto" />
 
       {/* Requisito 3: imagem representando a tematica */}
@@ -202,11 +274,7 @@ export default function App() {
       />
 
       {/* Botao secundario para limpar o formulario */}
-      <FormButton
-        title="Limpar"
-        onPress={resetForm}
-        variant="secondary"
-      />
+      <FormButton title="Limpar" onPress={resetForm} variant="secondary" />
     </ScreenWrapperScrollable>
   );
 }
