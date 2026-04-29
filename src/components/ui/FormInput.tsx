@@ -41,8 +41,14 @@ export default function FormInput({
 
   return (
     <View style={styles.container}>
-      {/* Label do campo com cor vermelha se houver erro */}
-      <Text style={[styles.label, hasError && styles.labelError]}>
+      {/* Label do campo com cor que muda conforme estado */}
+      <Text
+        style={[
+          styles.label,
+          focused && !hasError && styles.labelFocused,
+          hasError && styles.labelError,
+        ]}
+      >
         {label}
       </Text>
 
@@ -56,7 +62,7 @@ export default function FormInput({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#999"
+        placeholderTextColor="#aaa"
         keyboardType={keyboardType}
         onFocus={() => setFocused(true)}
         onBlur={handleBlur}
@@ -75,32 +81,35 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#444",
+    color: "#555",
+  },
+  labelFocused: {
+    color: "#2980b9",
   },
   labelError: {
-    color: "#d32f2f",
+    color: "#c0392b",
   },
   input: {
     borderWidth: 1.5,
-    borderColor: "#ccc",
+    borderColor: "#dce1e8",
     borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: "#f9f9f9",
-    color: "#333",
+    backgroundColor: "#f5f7fa",
+    color: "#2c3e50",
   },
   inputFocused: {
-    borderColor: "#3498db",
+    borderColor: "#2980b9",
     backgroundColor: "#fff",
   },
   inputError: {
-    borderColor: "#d32f2f",
-    backgroundColor: "#fef2f2",
+    borderColor: "#c0392b",
+    backgroundColor: "#fdf0ef",
   },
   errorText: {
     fontSize: 13,
-    color: "#d32f2f",
+    color: "#c0392b",
     fontWeight: "500",
   },
 });

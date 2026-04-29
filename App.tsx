@@ -127,16 +127,16 @@ export default function App() {
     console.log("Nome:", name);
     console.log("Preco: R$", price);
     console.log("Categoria:", category);
-    console.log("Em estoque:", inStock ? "Sim" : "Nao");
+    console.log("Em estoque:", inStock ? "Sim" : "Não");
     console.log("=============================");
 
-    // Exibe alerta de sucesso com resumo dos dados
+    // Exibe alerta de sucesso com resumo dos dadosz
     showAlert(
       "Cadastro realizado",
       "Nome: " + name +
       "\nPreco: R$ " + price +
       "\nCategoria: " + category +
-      "\nEm estoque: " + (inStock ? "Sim" : "Nao")
+      "\nEm estoque: " + (inStock ? "Sim" : "Não")
     );
 
     // Limpa o formulario para um novo cadastro
@@ -147,8 +147,8 @@ export default function App() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <StatusBar style="auto" />
-        <ActivityIndicator size="large" color="#3498db" />
+        <StatusBar style="dark" />
+        <ActivityIndicator size="large" color="#2980b9" />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -157,18 +157,23 @@ export default function App() {
   // Requisito 1: ScreenWrapperScrollable como container principal
   return (
     <ScreenWrapperScrollable gap={14}>
-      <StatusBar style="auto" />
+      <StatusBar style="dark" />
 
-      {/* Requisito 3: imagem representando a tematica */}
-      <Image
-        source={{
-          uri: "https://cdn-icons-png.flaticon.com/512/900/900618.png",
-        }}
-        style={styles.logo}
-      />
+      {/* Cabecalho com fundo colorido */}
+      <View style={styles.header}>
+        {/* Requisito 3: imagem representando a tematica */}
+        <Image
+          source={{
+            uri: "https://cdn-icons-png.flaticon.com/512/900/900618.png",
+          }}
+          style={styles.logo}
+        />
+        <Text style={styles.title}>Cadastro de Componente</Text>
+        <Text style={styles.subtitle}>Preencha os dados da peca de PC</Text>
+      </View>
 
-      <Text style={styles.title}>Cadastro de Componente</Text>
-      <Text style={styles.subtitle}>Preencha os dados da peca de PC</Text>
+      {/* Separador visual */}
+      <View style={styles.divider} />
 
       {/* Requisito 4 e 5: FormInput com label, erro e eventos */}
       <FormInput
@@ -200,7 +205,7 @@ export default function App() {
       />
 
       {/* Requisito 7: Switch para indicar se esta em estoque */}
-      <View style={styles.switchRow}>
+      <View style={[styles.switchRow, inStock && styles.switchRowActive]}>
         <View>
           <Text style={styles.switchLabel}>Em estoque</Text>
           <Text style={styles.switchHint}>
@@ -210,10 +215,13 @@ export default function App() {
         <Switch
           value={inStock}
           onValueChange={setInStock}
-          trackColor={{ false: "#ddd", true: "#a8d8ea" }}
-          thumbColor={inStock ? "#3498db" : "#ccc"}
+          trackColor={{ false: "#dce1e8", true: "#7fb8de" }}
+          thumbColor={inStock ? "#2980b9" : "#bdc3c7"}
         />
       </View>
+
+      {/* Separador visual */}
+      <View style={styles.divider} />
 
       {/* Requisito 8 e 9: FormButton desabilitado enquanto campos invalidos */}
       <FormButton
@@ -231,52 +239,63 @@ export default function App() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f5f7fa",
     justifyContent: "center",
     alignItems: "center",
     gap: 16,
   },
   loadingText: {
     fontSize: 16,
-    color: "#888",
+    color: "#7f8c8d",
+  },
+  header: {
+    alignItems: "center",
+    paddingTop: 24,
+    paddingBottom: 8,
+    gap: 6,
   },
   logo: {
     width: 72,
     height: 72,
-    alignSelf: "center",
-    marginTop: 12,
+    marginBottom: 8,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    textAlign: "center",
     color: "#2c3e50",
   },
   subtitle: {
     fontSize: 14,
-    color: "#999",
-    textAlign: "center",
-    marginBottom: 2,
+    color: "#7f8c8d",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#e8ecf1",
+    marginVertical: 4,
   },
   switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#f5f7fa",
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 1.5,
+    borderColor: "#dce1e8",
+  },
+  switchRowActive: {
+    borderColor: "#7fb8de",
+    backgroundColor: "#eef6fc",
   },
   switchLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#444",
+    color: "#555",
   },
   switchHint: {
     fontSize: 12,
-    color: "#999",
+    color: "#7f8c8d",
     marginTop: 2,
   },
 });

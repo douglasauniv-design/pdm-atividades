@@ -25,7 +25,7 @@ export default function FormButton({
       style={[
         styles.button,
         isPrimary ? styles.primary : styles.secondary,
-        disabled && styles.disabled,
+        disabled && (isPrimary ? styles.primaryDisabled : styles.secondaryDisabled),
       ]}
       onPress={onPress}
       disabled={disabled}
@@ -51,16 +51,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   primary: {
-    backgroundColor: "#3498db",
+    backgroundColor: "#2980b9",
   },
   secondary: {
     backgroundColor: "transparent",
     borderWidth: 1.5,
-    borderColor: "#3498db",
+    borderColor: "#2980b9",
   },
-  disabled: {
-    backgroundColor: "#d5d5d5",
-    borderColor: "#d5d5d5",
+  primaryDisabled: {
+    backgroundColor: "#bdc3c7",
+  },
+  secondaryDisabled: {
+    borderColor: "#bdc3c7",
   },
   text: {
     color: "#fff",
@@ -68,9 +70,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   secondaryText: {
-    color: "#3498db",
+    color: "#2980b9",
   },
   disabledText: {
-    color: "#999",
+    color: "#95a5a6",
   },
 });
