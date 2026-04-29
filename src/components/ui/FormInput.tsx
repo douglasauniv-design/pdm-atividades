@@ -11,6 +11,7 @@ type FormInputProps = {
   error?: string;
   value: string;
   onChangeText: (text: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   keyboardType?: "default" | "numeric";
 };
@@ -20,6 +21,7 @@ export default function FormInput({
   error,
   value,
   onChangeText,
+  onBlur,
   placeholder,
   keyboardType = "default",
 }: FormInputProps) {
@@ -27,16 +29,24 @@ export default function FormInput({
   const [focused, setFocused] = useState<boolean>(false);
 
   // Verifica se ha erro para aplicar estilos visuais
-  const hasError = error !== undefined && error !== "";
+  const hasError = error !== undefined && error.length > 0;
+
+  // Funcao chamada quando o usuario sai do campo
+  const handleBlur = () => {
+    setFocused(false);
+    if (onBlur) {
+      onBlur();
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Label do campo */}
+      {/* Label do campo com cor vermelha se houver erro */}
       <Text style={[styles.label, hasError && styles.labelError]}>
         {label}
       </Text>
 
-      {/* Campo de texto com borda que muda conforme estado */}
+      {/* Campo de texto com borda que muda conforme o estado */}
       <TextInput
         style={[
           styles.input,
@@ -46,13 +56,13 @@ export default function FormInput({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#aaa"
+        placeholderTextColor="#999"
         keyboardType={keyboardType}
         onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onBlur={handleBlur}
       />
 
-      {/* Mensagem de erro exibida apenas quando hasError e true */}
+      {/* Mensagem de erro visivel apenas quando hasError e true */}
       {hasError && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -60,23 +70,24 @@ export default function FormInput({
 
 const styles = StyleSheet.create({
   container: {
-    gap: 4,
+    gap: 5,
   },
   label: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
+    color: "#444",
   },
   labelError: {
-    color: "#e74c3c",
+    color: "#d32f2f",
   },
   input: {
     borderWidth: 1.5,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     fontSize: 16,
-    backgroundColor: "#fafafa",
+    backgroundColor: "#f9f9f9",
     color: "#333",
   },
   inputFocused: {
@@ -84,12 +95,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   inputError: {
-    borderColor: "#e74c3c",
-    backgroundColor: "#fff5f5",
+    borderColor: "#d32f2f",
+    backgroundColor: "#fef2f2",
   },
   errorText: {
     fontSize: 13,
-    color: "#e74c3c",
-    marginTop: 2,
+    color: "#d32f2f",
+    fontWeight: "500",
   },
 });

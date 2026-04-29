@@ -43,8 +43,10 @@ export default function App() {
   const [priceError, setPriceError] = useState<string>("");
   const [categoryError, setCategoryError] = useState<string>("");
 
-  // Estado que indica se o formulario ja foi submetido pelo menos uma vez
-  const [submitted, setSubmitted] = useState<boolean>(false);
+  // Controle de quais campos o usuario ja interagiu (tocou e saiu)
+  const [nameTouched, setNameTouched] = useState<boolean>(false);
+  const [priceTouched, setPriceTouched] = useState<boolean>(false);
+  const [categoryTouched, setCategoryTouched] = useState<boolean>(false);
 
   // Requisito 9: estado que controla se o botao esta habilitado
   const [formValid, setFormValid] = useState<boolean>(false);
@@ -59,6 +61,7 @@ export default function App() {
   }, []);
 
   // Requisito 9: useEffect que monitora os campos e habilita/desabilita o botao
+  // Tambem atualiza os erros dos campos que o usuario ja tocou
   useEffect(() => {
     const isNameValid = name.trim().length >= 3;
     const isPriceValid =
@@ -67,91 +70,39 @@ export default function App() {
 
     setFormValid(isNameValid && isPriceValid && isCategoryValid);
 
-    // Se o formulario ja foi submetido, valida em tempo real
-    if (submitted) {
-      validateField("name", name);
-      validateField("price", price);
-      validateField("category", category);
-    }
-  }, [name, price, category, submitted]);
-
-  // Funcao que valida um campo individual e define a mensagem de erro
-  const validateField = (field: string, value: string) => {
-    if (field === "name") {
-      if (value.trim().length === 0) {
+    // Mostra ou limpa erros apenas para campos ja tocados
+    if (nameTouched) {
+      if (name.trim().length === 0) {
         setNameError("Nome e obrigatorio");
-      } else if (value.trim().length < 3) {
+      } else if (name.trim().length < 3) {
         setNameError("Nome deve ter pelo menos 3 caracteres");
       } else {
         setNameError("");
       }
     }
 
-    if (field === "price") {
-      if (value.trim().length === 0) {
+    if (priceTouched) {
+      if (price.trim().length === 0) {
         setPriceError("Preco e obrigatorio");
-      } else if (isNaN(Number(value))) {
+      } else if (isNaN(Number(price))) {
         setPriceError("Preco deve ser um numero valido");
-      } else if (Number(value) <= 0) {
+      } else if (Number(price) <= 0) {
         setPriceError("Preco deve ser maior que zero");
       } else {
         setPriceError("");
       }
     }
 
-    if (field === "category") {
-      if (value.trim().length === 0) {
+    if (categoryTouched) {
+      if (category.trim().length === 0) {
         setCategoryError("Categoria e obrigatoria");
-      } else if (value.trim().length < 2) {
+      } else if (category.trim().length < 2) {
         setCategoryError("Categoria deve ter pelo menos 2 caracteres");
       } else {
         setCategoryError("");
       }
     }
-  };
-
-  // Funcao de validacao completa executada ao submeter
-  const validate = (): boolean => {
-    let valid = true;
-
-    // Validacao do nome
-    if (name.trim().length === 0) {
-      setNameError("Nome e obrigatorio");
-      valid = false;
-    } else if (name.trim().length < 3) {
-      setNameError("Nome deve ter pelo menos 3 caracteres");
-      valid = false;
-    } else {
-      setNameError("");
-    }
-
-    // Validacao do preco
-    if (price.trim().length === 0) {
-      setPriceError("Preco e obrigatorio");
-      valid = false;
-    } else if (isNaN(Number(price))) {
-      setPriceError("Preco deve ser um numero valido");
-      valid = false;
-    } else if (Number(price) <= 0) {
-      setPriceError("Preco deve ser maior que zero");
-      valid = false;
-    } else {
-      setPriceError("");
-    }
-
-    // Validacao da categoria
-    if (category.trim().length === 0) {
-      setCategoryError("Categoria e obrigatoria");
-      valid = false;
-    } else if (category.trim().length < 2) {
-      setCategoryError("Categoria deve ter pelo menos 2 caracteres");
-      valid = false;
-    } else {
-      setCategoryError("");
-    }
-
-    return valid;
-  };
+  }, [name, price, category, nameTouched, priceTouched, categoryTouched]);
 
   // Funcao que limpa todos os campos e erros do formulario
   const resetForm = () => {
@@ -162,19 +113,13 @@ export default function App() {
     setNameError("");
     setPriceError("");
     setCategoryError("");
-    setSubmitted(false);
+    setNameTouched(false);
+    setPriceTouched(false);
+    setCategoryTouched(false);
   };
 
   // Requisito 10: acao de submissao que loga os valores no console
   const handleSubmit = () => {
-    // Marca que o formulario foi submetido (ativa validacao em tempo real)
-    setSubmitted(true);
-
-    // Executa a validacao completa
-    if (!validate()) {
-      return;
-    }
-
     // Loga os dados no console (F12 na web, terminal no Expo Go)
     console.log("=============================");
     console.log("  DADOS DO FORMULARIO");
@@ -185,20 +130,16 @@ export default function App() {
     console.log("Em estoque:", inStock ? "Sim" : "Nao");
     console.log("=============================");
 
-    // Exibe alerta de sucesso
+    // Exibe alerta de sucesso com resumo dos dados
     showAlert(
       "Cadastro realizado",
-      "Nome: " +
-        name +
-        "\nPreco: R$ " +
-        price +
-        "\nCategoria: " +
-        category +
-        "\nEm estoque: " +
-        (inStock ? "Sim" : "Nao")
+      "Nome: " + name +
+      "\nPreco: R$ " + price +
+      "\nCategoria: " + category +
+      "\nEm estoque: " + (inStock ? "Sim" : "Nao")
     );
 
-    // Limpa o formulario
+    // Limpa o formulario para um novo cadastro
     resetForm();
   };
 
@@ -208,7 +149,7 @@ export default function App() {
       <View style={styles.loadingContainer}>
         <StatusBar style="auto" />
         <ActivityIndicator size="large" color="#3498db" />
-        <Text style={styles.loadingText}>Sistema Carregado...</Text>
+        <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
   }
@@ -235,6 +176,7 @@ export default function App() {
         placeholder="Ex: RTX 4070 Super"
         value={name}
         onChangeText={setName}
+        onBlur={() => setNameTouched(true)}
         error={nameError}
       />
 
@@ -243,6 +185,7 @@ export default function App() {
         placeholder="Ex: 3499.90"
         value={price}
         onChangeText={setPrice}
+        onBlur={() => setPriceTouched(true)}
         keyboardType="numeric"
         error={priceError}
       />
@@ -252,12 +195,18 @@ export default function App() {
         placeholder="Ex: Placa de Video"
         value={category}
         onChangeText={setCategory}
+        onBlur={() => setCategoryTouched(true)}
         error={categoryError}
       />
 
       {/* Requisito 7: Switch para indicar se esta em estoque */}
       <View style={styles.switchRow}>
-        <Text style={styles.switchLabel}>Em estoque</Text>
+        <View>
+          <Text style={styles.switchLabel}>Em estoque</Text>
+          <Text style={styles.switchHint}>
+            {inStock ? "Disponivel para venda" : "Indisponivel no momento"}
+          </Text>
+        </View>
         <Switch
           value={inStock}
           onValueChange={setInStock}
@@ -289,13 +238,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: "#666",
+    color: "#888",
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 72,
+    height: 72,
     alignSelf: "center",
-    marginTop: 10,
+    marginTop: 12,
   },
   title: {
     fontSize: 22,
@@ -305,23 +254,29 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: "#888",
+    color: "#999",
     textAlign: "center",
-    marginBottom: 4,
+    marginBottom: 2,
   },
   switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#fafafa",
-    padding: 12,
-    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "#ccc",
   },
   switchLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#333",
+    color: "#444",
+  },
+  switchHint: {
+    fontSize: 12,
+    color: "#999",
+    marginTop: 2,
   },
 });
