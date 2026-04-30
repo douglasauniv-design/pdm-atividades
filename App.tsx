@@ -72,7 +72,7 @@ export default function App() {
     // Mostra ou limpa erros apenas para campos ja tocados
     if (nameTouched) {
       if (name.trim().length === 0) {
-        setNameError("Nome e obrigatorio");
+        setNameError("Nome é obrigatorio");
       } else if (name.trim().length < 3) {
         setNameError("Nome deve ter pelo menos 3 caracteres");
       } else {
@@ -82,7 +82,7 @@ export default function App() {
 
     if (priceTouched) {
       if (price.trim().length === 0) {
-        setPriceError("Preço e obrigatorio");
+        setPriceError("Preço é obrigatorio");
       } else if (isNaN(Number(price))) {
         setPriceError("Preço deve ser um numero valido");
       } else if (Number(price) <= 0) {
@@ -94,7 +94,7 @@ export default function App() {
 
     if (categoryTouched) {
       if (category.trim().length === 0) {
-        setCategoryError("Categoria e obrigatoria");
+        setCategoryError("Categoria é obrigatoria");
       } else if (category.trim().length < 2) {
         setCategoryError("Categoria deve ter pelo menos 2 caracteres");
       } else {
