@@ -29,7 +29,7 @@ export default function FormButton({
       ]}
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
     >
       <Text
         style={[
@@ -46,33 +46,35 @@ export default function FormButton({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 15,
-    borderRadius: 10,
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: "center",
   },
   primary: {
-    backgroundColor: "#2980b9",
+    backgroundColor: "#2563eb",
   },
   secondary: {
     backgroundColor: "transparent",
     borderWidth: 1.5,
-    borderColor: "#2980b9",
+    borderColor: "#cbd5e1",
   },
   primaryDisabled: {
-    backgroundColor: "#bdc3c7",
+    backgroundColor: "#cbd5e1",
   },
   secondaryDisabled: {
-    borderColor: "#bdc3c7",
+    borderColor: "#e2e8f0",
   },
   text: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    letterSpacing: 0.3,
   },
   secondaryText: {
-    color: "#2980b9",
+    color: "#64748b",
+    fontWeight: "600",
   },
   disabledText: {
-    color: "#95a5a6",
+    color: "#94a3b8",
   },
 });

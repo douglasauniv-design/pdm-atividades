@@ -61,7 +61,6 @@ export default function App() {
   }, []);
 
   // Requisito 9: useEffect que monitora os campos e habilita/desabilita o botao
-  // Tambem atualiza os erros dos campos que o usuario ja tocou
   useEffect(() => {
     const isNameValid = name.trim().length >= 3;
     const isPriceValid =
@@ -83,11 +82,11 @@ export default function App() {
 
     if (priceTouched) {
       if (price.trim().length === 0) {
-        setPriceError("Preco e obrigatorio");
+        setPriceError("Preço e obrigatorio");
       } else if (isNaN(Number(price))) {
-        setPriceError("Preco deve ser um numero valido");
+        setPriceError("Preço deve ser um numero valido");
       } else if (Number(price) <= 0) {
-        setPriceError("Preco deve ser maior que zero");
+        setPriceError("Preço deve ser maior que zero");
       } else {
         setPriceError("");
       }
@@ -103,6 +102,13 @@ export default function App() {
       }
     }
   }, [name, price, category, nameTouched, priceTouched, categoryTouched]);
+
+  // Calcula quantos campos estao preenchidos corretamente
+  const filledCount = [
+    name.trim().length >= 3,
+    price.trim().length > 0 && !isNaN(Number(price)) && Number(price) > 0,
+    category.trim().length >= 2,
+  ].filter(Boolean).length;
 
   // Funcao que limpa todos os campos e erros do formulario
   const resetForm = () => {
@@ -120,26 +126,23 @@ export default function App() {
 
   // Requisito 10: acao de submissao que loga os valores no console
   const handleSubmit = () => {
-    // Loga os dados no console (F12 na web, terminal no Expo Go)
     console.log("=============================");
     console.log("  DADOS DO FORMULARIO");
     console.log("=============================");
     console.log("Nome:", name);
-    console.log("Preco: R$", price);
+    console.log("Preço: R$", price);
     console.log("Categoria:", category);
     console.log("Em estoque:", inStock ? "Sim" : "Não");
     console.log("=============================");
 
-    // Exibe alerta de sucesso com resumo dos dadosz
     showAlert(
       "Cadastro realizado",
       "Nome: " + name +
-      "\nPreco: R$ " + price +
+      "\nPreço: R$ " + price +
       "\nCategoria: " + category +
       "\nEm estoque: " + (inStock ? "Sim" : "Não")
     );
 
-    // Limpa o formulario para um novo cadastro
     resetForm();
   };
 
@@ -147,19 +150,32 @@ export default function App() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <StatusBar style="dark" />
-        <ActivityIndicator size="large" color="#2980b9" />
-        <Text style={styles.loadingText}>Carregando...</Text>
+        <StatusBar style="light" />
+        <View style={styles.loadingContent}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/900/900618.png",
+            }}
+            style={styles.loadingLogo}
+          />
+          <Text style={styles.loadingTitle}>PC - Cadastro</Text>
+          <ActivityIndicator
+            size="large"
+            color="#fff"
+            style={{ marginTop: 24 }}
+          />
+          <Text style={styles.loadingText}>Carregando...</Text>
+        </View>
       </View>
     );
   }
 
   // Requisito 1: ScreenWrapperScrollable como container principal
   return (
-    <ScreenWrapperScrollable gap={14}>
-      <StatusBar style="dark" />
+    <ScreenWrapperScrollable padding={0}>
+      <StatusBar style="light" />
 
-      {/* Cabecalho com fundo colorido */}
+      {/* Cabecalho escuro com logo e titulo */}
       <View style={styles.header}>
         {/* Requisito 3: imagem representando a tematica */}
         <Image
@@ -169,133 +185,235 @@ export default function App() {
           style={styles.logo}
         />
         <Text style={styles.title}>Cadastro de Componente</Text>
-        <Text style={styles.subtitle}>Preencha os dados da peca de PC</Text>
+        <Text style={styles.subtitle}>Adicione peças ao seu inventario</Text>
       </View>
 
-      {/* Separador visual */}
-      <View style={styles.divider} />
-
-      {/* Requisito 4 e 5: FormInput com label, erro e eventos */}
-      <FormInput
-        label="Nome do componente"
-        placeholder="Ex: RTX 4070 Super"
-        value={name}
-        onChangeText={setName}
-        onBlur={() => setNameTouched(true)}
-        error={nameError}
-      />
-
-      <FormInput
-        label="Preco (R$)"
-        placeholder="Ex: 3499.90"
-        value={price}
-        onChangeText={setPrice}
-        onBlur={() => setPriceTouched(true)}
-        keyboardType="numeric"
-        error={priceError}
-      />
-
-      <FormInput
-        label="Categoria"
-        placeholder="Ex: Placa de Video"
-        value={category}
-        onChangeText={setCategory}
-        onBlur={() => setCategoryTouched(true)}
-        error={categoryError}
-      />
-
-      {/* Requisito 7: Switch para indicar se esta em estoque */}
-      <View style={[styles.switchRow, inStock && styles.switchRowActive]}>
-        <View>
-          <Text style={styles.switchLabel}>Em estoque</Text>
-          <Text style={styles.switchHint}>
-            {inStock ? "Disponivel para venda" : "Indisponivel no momento"}
-          </Text>
+      {/* Barra de progresso dos campos */}
+      <View style={styles.progressSection}>
+        <View style={styles.progressRow}>
+          <Text style={styles.progressLabel}>Progresso</Text>
+          <Text style={styles.progressCount}>{filledCount}/3 campos</Text>
         </View>
-        <Switch
-          value={inStock}
-          onValueChange={setInStock}
-          trackColor={{ false: "#dce1e8", true: "#7fb8de" }}
-          thumbColor={inStock ? "#2980b9" : "#bdc3c7"}
+        <View style={styles.progressBar}>
+          <View
+            style={[
+              styles.progressFill,
+              { flex: filledCount, },
+              filledCount === 3 && styles.progressComplete,
+            ]}
+          />
+          <View style={{ flex: 3 - filledCount }} />
+        </View>
+      </View>
+
+      {/* Card com os campos do formulario */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Dados do Componente</Text>
+
+        {/* Requisito 4 e 5: FormInput com label, erro e eventos */}
+        <FormInput
+          label="Nome do componente"
+          placeholder="Ex: RTX 4070 Super"
+          value={name}
+          onChangeText={setName}
+          onBlur={() => setNameTouched(true)}
+          error={nameError}
+        />
+
+        <FormInput
+          label="Preço (R$)"
+          placeholder="Ex: 3499.90"
+          value={price}
+          onChangeText={setPrice}
+          onBlur={() => setPriceTouched(true)}
+          keyboardType="numeric"
+          error={priceError}
+        />
+
+        <FormInput
+          label="Categoria"
+          placeholder="Ex: Placa de Video"
+          value={category}
+          onChangeText={setCategory}
+          onBlur={() => setCategoryTouched(true)}
+          error={categoryError}
         />
       </View>
 
-      {/* Separador visual */}
-      <View style={styles.divider} />
+      {/* Card com o switch */}
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Disponibilidade</Text>
 
-      {/* Requisito 8 e 9: FormButton desabilitado enquanto campos invalidos */}
-      <FormButton
-        title="Cadastrar"
-        onPress={handleSubmit}
-        disabled={!formValid}
-      />
+        {/* Requisito 7: Switch para indicar se esta em estoque */}
+        <View style={[styles.switchRow, inStock && styles.switchRowActive]}>
+          <View>
+            <Text style={[styles.switchLabel, inStock && styles.switchLabelActive]}>
+              Em estoque
+            </Text>
+            <Text style={styles.switchHint}>
+              {inStock ? "Disponivel para venda" : "Indisponivel no momento"}
+            </Text>
+          </View>
+          <Switch
+            value={inStock}
+            onValueChange={setInStock}
+            trackColor={{ false: "#e2e8f0", true: "#93c5fd" }}
+            thumbColor={inStock ? "#2563eb" : "#cbd5e1"}
+          />
+        </View>
+      </View>
 
-      {/* Botao secundario para limpar o formulario */}
-      <FormButton title="Limpar" onPress={resetForm} variant="secondary" />
+      {/* Card com os botoes */}
+      <View style={styles.card}>
+        {/* Requisito 8 e 9: FormButton desabilitado enquanto campos invalidos */}
+        <FormButton
+          title="Cadastrar"
+          onPress={handleSubmit}
+          disabled={!formValid}
+        />
+
+        <FormButton title="Limpar campos" onPress={resetForm} variant="secondary" />
+      </View>
+
+      {/* Espaco extra no final para respiro */}
+      <View style={{ height: 20 }} />
     </ScreenWrapperScrollable>
   );
 }
 
 const styles = StyleSheet.create({
+  // Loading
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f7fa",
+    backgroundColor: "#1e293b",
+  },
+  loadingContent: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    gap: 16,
+    gap: 8,
+  },
+  loadingLogo: {
+    width: 80,
+    height: 80,
+    marginBottom: 8,
+  },
+  loadingTitle: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#fff",
   },
   loadingText: {
-    fontSize: 16,
-    color: "#7f8c8d",
+    fontSize: 14,
+    color: "#94a3b8",
+    marginTop: 8,
   },
+
+  // Cabecalho
   header: {
+    backgroundColor: "#1e293b",
     alignItems: "center",
-    paddingTop: 24,
-    paddingBottom: 8,
-    gap: 6,
+    paddingTop: 50,
+    paddingBottom: 28,
+    gap: 4,
   },
   logo: {
-    width: 72,
-    height: 72,
-    marginBottom: 8,
+    width: 64,
+    height: 64,
+    marginBottom: 10,
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#2c3e50",
+    color: "#fff",
   },
   subtitle: {
     fontSize: 14,
-    color: "#7f8c8d",
+    color: "#94a3b8",
   },
-  divider: {
-    height: 1,
-    backgroundColor: "#e8ecf1",
-    marginVertical: 4,
+
+  // Barra de progresso
+  progressSection: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: "#f1f5f9",
+    gap: 8,
   },
+  progressRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  progressLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#64748b",
+  },
+  progressCount: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#2563eb",
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: "#e2e8f0",
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  progressFill: {
+    height: "100%",
+    backgroundColor: "#2563eb",
+    borderRadius: 3,
+  },
+  progressComplete: {
+    backgroundColor: "#16a34a",
+  },
+
+  // Cards
+  card: {
+    marginHorizontal: 16,
+    marginTop: 14,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    padding: 18,
+    gap: 14,
+    borderWidth: 1,
+    borderColor: "#e9eef4",
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: "#334155",
+    marginBottom: 2,
+  },
+
+  // Switch
   switchRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f5f7fa",
+    backgroundColor: "#f8fafc",
     paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 10,
+    paddingVertical: 13,
+    borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: "#dce1e8",
+    borderColor: "#e2e8f0",
   },
   switchRowActive: {
-    borderColor: "#7fb8de",
-    backgroundColor: "#eef6fc",
+    borderColor: "#93c5fd",
+    backgroundColor: "#eff6ff",
   },
   switchLabel: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#555",
+    color: "#475569",
+  },
+  switchLabelActive: {
+    color: "#2563eb",
   },
   switchHint: {
     fontSize: 12,
-    color: "#7f8c8d",
+    color: "#94a3b8",
     marginTop: 2,
   },
 });
