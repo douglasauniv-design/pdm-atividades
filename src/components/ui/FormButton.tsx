@@ -1,9 +1,7 @@
-// Componente reutilizavel FormButton
-// Requisito 8: usa TouchableOpacity em vez do Button nativo
-
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Colors } from "../../constants/colors";
 
-// Contrato de props do componente
 type FormButtonProps = {
   title: string;
   onPress: () => void;
@@ -17,25 +15,28 @@ export default function FormButton({
   disabled = false,
   variant = "primary",
 }: FormButtonProps) {
-  // Verifica se e a variante principal
+  const { theme } = useTheme();
+  const colors = Colors[theme];
   const isPrimary = variant === "primary";
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        isPrimary ? styles.primary : styles.secondary,
-        disabled && (isPrimary ? styles.primaryDisabled : styles.secondaryDisabled),
+        isPrimary
+          ? { backgroundColor: colors.primary }
+          : { backgroundColor: "transparent", borderWidth: 1.5, borderColor: colors.border },
+        disabled && { backgroundColor: colors.border },
       ]}
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.8}
+      activeOpacity={0.7}
     >
       <Text
         style={[
           styles.text,
-          !isPrimary && styles.secondaryText,
-          disabled && styles.disabledText,
+          !isPrimary && { color: colors.text },
+          disabled && { color: colors.placeholder },
         ]}
       >
         {title}
@@ -46,35 +47,13 @@ export default function FormButton({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 15,
+    borderRadius: 10,
     alignItems: "center",
-  },
-  primary: {
-    backgroundColor: "#2563eb",
-  },
-  secondary: {
-    backgroundColor: "transparent",
-    borderWidth: 1.5,
-    borderColor: "#cbd5e1",
-  },
-  primaryDisabled: {
-    backgroundColor: "#cbd5e1",
-  },
-  secondaryDisabled: {
-    borderColor: "#e2e8f0",
   },
   text: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
-    letterSpacing: 0.3,
-  },
-  secondaryText: {
-    color: "#64748b",
-    fontWeight: "600",
-  },
-  disabledText: {
-    color: "#94a3b8",
   },
 });
