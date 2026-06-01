@@ -1,33 +1,40 @@
-// Tipo de uma motocicleta individual
+// Tipo base de uma motocicleta (sem a categoria)
 export type Motorcycle = {
   id: string;
   brand: string;
   model: string;
   year: number;
-  category: string;
 };
 
-// Tipo de uma secao no formato que a SectionList espera
-export type MotorcycleSection = {
+// Tipo dos dados planos: cada moto + a propriedade category (interseção com &)
+export type FlatListData = (Motorcycle & { category: string })[];
+
+// Tipo dos dados seccionados que a SectionList espera
+export type SectionListData = {
   title: string;
   data: Motorcycle[];
-};
+}[];
 
-// Agrupa um array plano de motos em secoes por categoria
-export function groupByCategory(motorcycles: Motorcycle[]): MotorcycleSection[] {
-  const groups: { [category: string]: Motorcycle[] } = {};
+// Converte o array plano em dados agrupados por categoria
+export function convertData(arrayData: FlatListData): SectionListData {
+  let result: SectionListData = [];
 
-  motorcycles.forEach((moto) => {
-    if (!groups[moto.category]) {
-      groups[moto.category] = [];
+  arrayData.forEach((motorcycle) => {
+    // Procura se ja existe uma secao com essa categoria
+    const cat = result.find((r) => r.title === motorcycle.category);
+
+    if (cat) {
+      // Se a secao existe, adiciona a moto nela
+      cat.data.push(motorcycle);
+    } else {
+      // Se nao existe, cria uma nova secao com essa moto
+      const newCat = {
+        title: motorcycle.category,
+        data: [motorcycle],
+      };
+      result.push(newCat);
     }
-    groups[moto.category].push(moto);
   });
 
-  return Object.keys(groups)
-    .sort()
-    .map((category) => ({
-      title: category,
-      data: groups[category],
-    }));
+  return result;
 }

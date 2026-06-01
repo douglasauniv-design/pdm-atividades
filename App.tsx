@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, SectionList } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import { groupByCategory, Motorcycle } from "./src/utils/groupMotorcycles";
+import { convertData, FlatListData } from "./src/utils/groupMotorcycles";
 import motorcyclesData from "./src/mocks/motorcycles.json";
 
-// Converte o JSON importado para o tipo Motorcycle e agrupa por categoria
-const sections = groupByCategory(motorcyclesData as Motorcycle[]);
+// Converte o JSON plano em dados agrupados por categoria
+const sections = convertData(motorcyclesData as FlatListData);
 
 export default function App() {
   return (
